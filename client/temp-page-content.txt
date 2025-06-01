@@ -1,0 +1,77 @@
+'use client';
+
+import { useState } from 'react';
+import { PriceGrid } from '@/components/PriceGrid';
+import { PriceChart } from '@/components/PriceChart';
+import { TokenPriceCard } from '@/components/TokenPriceCard';
+
+export default function PriceDashboardPage() {
+  // Common crypto assets
+  const commonAssets = ['BTC', 'ETH', 'HBAR', 'SOL', 'ADA', 'DOT'];
+  
+  // Selected asset for chart
+  const [selectedAsset, setSelectedAsset] = useState('HBAR');
+  
+  // Example token IDs (these would be fetched from your API in a real app)
+  const exampleTokens = [
+    { id: '0.0.1234567', name: 'Trust ETF 1', symbol: 'TETF1' },
+    { id: '0.0.7654321', name: 'Trust ETF 2', symbol: 'TETF2' },
+    { id: '0.0.9876543', name: 'Trust ETF 3', symbol: 'TETF3' }
+  ];
+
+  return (
+    <div className="container mx-auto py-8 space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold mb-6">Price Dashboard</h1>
+        <p className="text-muted-foreground mb-8">
+          Real-time price data for cryptocurrencies and Hedera tokens
+        </p>
+      </div>
+
+      {/* Price grid for common assets */}
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold">Cryptocurrency Prices</h2>
+        <PriceGrid assets={commonAssets} columns={3} refreshInterval={30000} />
+      </div>
+
+      {/* Price chart */}
+      <div className="space-y-4 mt-8">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-semibold">Price History</h2>
+          <div className="flex gap-2">
+            {commonAssets.map(asset => (
+              <button
+                key={asset}
+                onClick={() => setSelectedAsset(asset)}
+                className={`px-3 py-1 rounded-md text-sm ${
+                  selectedAsset === asset 
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-muted hover:bg-muted/80'
+                }`}
+              >
+                {asset}
+              </button>
+            ))}
+          </div>
+        </div>
+        <PriceChart asset={selectedAsset} days={7} height={400} />
+      </div>
+
+      {/* Hedera token prices */}
+      <div className="space-y-4 mt-8">
+        <h2 className="text-2xl font-semibold">Trust ETF Token Prices</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {exampleTokens.map(token => (
+            <TokenPriceCard
+              key={token.id}
+              tokenId={token.id}
+              tokenName={token.name}
+              tokenSymbol={token.symbol}
+              refreshInterval={60000}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+} 
